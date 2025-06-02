@@ -8,9 +8,11 @@ A Docker configuration for building an Ollama server exposed to a Tailnet.
      ```
      TS_AUTHKEY=tskey-xxxxxxxxxxxxxxxx
      OLLAMA_HOSTNAME=ollama-server
+     OLLAMA_URL=https://ollama-server.host.com
      ```
    - Replace `tskey-xxxxxxxxxxxxxxxx` with your actual Tailscale auth key.
-   - Replace `ollama-server` with the desired hostname for your Ollama server.
+   - Replace `ollama-server` with the desired hostname for your Ollama server via Tailscale.
+    - Replace `https://ollama-server.host.com` with the URL you want to use for accessing the Ollama server.
 2. **Update the Caddyfile**
    - Ensure the `Caddyfile` is configured to use the hostname specified in your `.env` file. The default configuration should work if you set `OLLAMA_HOSTNAME=ollama-server`.
 3. **Build the Docker image**

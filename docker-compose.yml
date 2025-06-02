@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   ollama:
     image: ollama/ollama:latest
@@ -47,6 +45,8 @@ services:
       - caddy_data:/data
       - caddy_config:/config
       - ./Caddyfile:/etc/caddy/Caddyfile
+    environment:
+      - OLLAMA_URL=${OLLAMA_URL} # Set your hostname in a .env file or replace directly
     networks:
       - internal
     depends_on:
