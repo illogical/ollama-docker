@@ -6,12 +6,20 @@ services:
     container_name: ollama
     environment:
       - OLLAMA_CORS_ORIGIN=*
+      - NVIDIA_VISIBLE_DEVICES=all
     volumes:
       - ollama-data:/root/.ollama
     expose:
       - "11434"
     networks:
       - internal
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
 
   tailscale:
     image: tailscale/tailscale:latest
