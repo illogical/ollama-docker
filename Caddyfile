@@ -1,6 +1,9 @@
-{$OLLAMA_URL} {
-    reverse_proxy ollama:11434
-    header Access-Control-Allow-Origin *
-    header Access-Control-Allow-Methods "GET, POST, OPTIONS"
-    header Access-Control-Allow-Headers "Content-Type, Authorization"
+beast2024.bangus-city.ts.net {
+  tls /certs/cert.crt /certs/key.key
+  reverse_proxy /api/* ollama:11434
+  reverse_proxy / ollama:11434
+
+  header Access-Control-Allow-Origin "*"
+  header Access-Control-Allow-Methods "GET, POST, OPTIONS"
+  header Access-Control-Allow-Headers "Content-Type, Authorization"
 }

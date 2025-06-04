@@ -1,16 +1,25 @@
 services:
+  tailscale:
+    image: tailscale/tailscale
+    container_name: tailscale
+    network_mode: "host"
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    volumes:
+      - ./tailscale-state:/var/lib/tailscale
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      - TS_AUTHKEY=${TS_AUTHKEY}
+    command: tailscaled
+
   ollama:
     image: ollama/ollama:latest
     container_name: ollama
-    environment:
-      - OLLAMA_CORS_ORIGIN=*
-      - NVIDIA_VISIBLE_DEVICES=all
     volumes:
-      - ollama-data:/root/.ollama
+      - ${MODEL_PATH}:/root/.ollama/models
     expose:
       - "11434"
-    networks:
-      - internal
     deploy:
       resources:
         reservations:
@@ -19,46 +28,16 @@ services:
               count: all
               capabilities: [gpu]
 
-  tailscale:
-    image: tailscale/tailscale:latest
-    container_name: tailscale
-    cap_add:
-      - NET_ADMIN
-      - NET_RAW
-    network_mode: service:ollama
-    volumes:
-      - tailscale-data:/var/lib/tailscale
-      - /dev/net/tun:/dev/net/tun
-      - ${PWD}/config:/config
-    environment:
-      - TS_AUTHKEY=${TS_AUTHKEY} # Place your authkey in a .env file or replace directly
-      - TS_EXTRA_ARGS=--hostname=${OLLAMA_HOSTNAME}
-      - TS_SERVE_CONFIG=/config/https.json
+  caddy:
+    image: caddy:alpine
+    container_name: caddy
     depends_on:
       - ollama
-
-  caddy:
-    image: caddy:latest
-    container_name: caddy
     ports:
       - "443:443"
     volumes:
-      - caddy_data:/data
-      - caddy_config:/config
+      - ./certs:/certs
       - ./Caddyfile:/etc/caddy/Caddyfile
-    environment:
-      - OLLAMA_URL=${OLLAMA_URL} # Set your hostname in a .env file or replace directly
-    networks:
-      - internal
-    depends_on:
-      - ollama
 
 volumes:
   ollama-data:
-  tailscale-data:
-  caddy_data:
-  caddy_config:
-
-networks:
-  internal:
-    driver: bridge
