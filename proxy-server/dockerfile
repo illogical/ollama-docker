@@ -1,0 +1,10 @@
+# Dockerfile for Bun-based Ollama Proxy
+FROM oven/bun:latest
+
+WORKDIR /app
+
+COPY . .
+
+EXPOSE 17102
+
+CMD ["bun", "ollama-proxy.ts"]
