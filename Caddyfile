@@ -1,7 +1,18 @@
-beast2024.bangus-city.ts.net {
+{$TAILNET_DOMAIN} {
   tls /certs/cert.crt /certs/key.key
-  reverse_proxy /api/* ollama:11434
-  reverse_proxy / ollama:11434
+
+  @options {
+    method OPTIONS
+    path /api/*
+  }
+  respond @options 200
+
+  header @options Access-Control-Allow-Origin "*"
+  header @options Access-Control-Allow-Methods "GET, POST, OPTIONS"
+  header @options Access-Control-Allow-Headers "Content-Type, Authorization"
+
+  reverse_proxy /api/* host.docker.internal:11434
+  reverse_proxy / host.docker.internal:11434
 
   header Access-Control-Allow-Origin "*"
   header Access-Control-Allow-Methods "GET, POST, OPTIONS"

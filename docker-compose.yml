@@ -13,31 +13,13 @@ services:
       - TS_AUTHKEY=${TS_AUTHKEY}
     command: tailscaled
 
-  ollama:
-    image: ollama/ollama:latest
-    container_name: ollama
-    volumes:
-      - ${MODEL_PATH}:/root/.ollama/models
-    expose:
-      - "11434"
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
-
   caddy:
     image: caddy:alpine
     container_name: caddy
-    depends_on:
-      - ollama
     ports:
       - "443:443"
     volumes:
       - ./certs:/certs
       - ./Caddyfile:/etc/caddy/Caddyfile
-
-volumes:
-  ollama-data:
+    environment:
+      - TAILNET_DOMAIN=${TAILNET_DOMAIN}
